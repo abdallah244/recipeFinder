@@ -1,0 +1,42 @@
+<div class="intro-container" #introContainer>
+  <!-- Three.js Canvas -->
+  <canvas class="particles-bg" #particlesBg></canvas>
+  
+  <!-- Content Overlay -->
+  <div class="content-overlay" [class.loaded]="isLoaded">
+    
+    <!-- Header Section -->
+    <div class="header-section">
+      <div class="logo-icon content-element">👨‍🍳</div>
+      <h1 class="main-title content-element">Recipe<span class="accent">Finder</span></h1>
+      <p class="tagline content-element">Where Culinary Dreams Become Reality</p>
+    </div>
+
+    <!-- Features Grid -->
+    <div class="features-grid">
+      <div class="feature-card content-element" *ngFor="let feature of features">
+        <div class="feature-icon">{{ feature.icon }}</div>
+        <div class="feature-content">
+          <h3>{{ feature.title }}</h3>
+          <p>{{ feature.description }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA Button -->
+    <div class="cta-section">
+      <button class="start-button content-element" (click)="startApp()" aria-label="Begin culinary journey">
+        <span>Start Cooking</span>
+        <svg class="button-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Loading Indicator -->
+  <div class="loading-indicator" [class.hidden]="isLoaded">
+    <div class="loading-spinner"></div>
+  </div>
+</div>

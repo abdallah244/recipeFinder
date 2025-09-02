@@ -1,0 +1,23 @@
+<div class="loading-container" #loadingContainer>
+  <div class="threejs-canvas" #canvasContainer></div>
+  
+  <div class="loading-content">
+    <div class="chef-animation">
+      <div class="chef-hat">👨‍🍳</div>
+      <div class="cooking-pan"></div>
+    </div>
+    
+    <h2 class="loading-title">Preparing Your Culinary Journey</h2>
+    
+    <div class="progress-container">
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width]="progress + '%'">
+          <div class="progress-sparkle"></div>
+        </div>
+      </div>
+      <span class="progress-text">{{ progress }}%</span>
+    </div>
+    
+    <p class="loading-tip">{{ loadingTips[currentTip] }}</p>
+  </div>
+</div>

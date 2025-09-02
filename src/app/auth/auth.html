@@ -1,0 +1,68 @@
+<div class="auth-container" #authContainer>
+  <!-- Floating Three.js Background -->
+  <div class="floating-icons-container" #floatingIcons></div>
+
+  <!-- Main Content -->
+  <div class="auth-content" [class.loaded]="isLoaded">
+    
+    <!-- Header Section -->
+    <div class="auth-header">
+      <div class="auth-logo auth-element">👨‍🍳</div>
+      <h1 class="auth-title auth-element">Welcome to <span class="brand">RecipeFinder</span></h1>
+      <p class="auth-subtitle auth-element">Choose your culinary journey</p>
+    </div>
+
+    <!-- Role Selection Cards -->
+    <div class="roles-container">
+      <div class="role-card auth-element" (click)="selectRole('user')">
+        <div class="card-icon">🔍</div>
+        <div class="card-content">
+          <h3>Food Explorer</h3>
+          <p>Discover amazing recipes, save favorites, and get personalized recommendations</p>
+          <ul class="features-list">
+            <li>Browse thousands of recipes</li>
+            <li>Save your favorites</li>
+            <li>Get personalized suggestions</li>
+            <li>available</li>
+          </ul>
+        </div>
+        <div class="card-action">
+          <span>Start Exploring</span>
+          <svg class="arrow-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="role-card auth-element" (click)="selectRole('admin')">
+        <div class="card-icon">👨‍🍳</div>
+        <div class="card-content">
+          <h3>Master Chef</h3>
+          <p>Create, manage, and share your culinary creations with the world</p>
+          <ul class="features-list">
+            <li>Create new recipes</li>
+            <li>Manage your collection</li>
+            <li>Analytics and insights</li>
+            <li>-- coming soon --</li>
+          </ul>
+        </div>
+        <div class="card-action">
+          <span>Enter Kitchen</span>
+          <svg class="arrow-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="auth-footer auth-element">
+      <p>© 2025 RecipeFinder - Abdallah Hany - for food lovers</p>
+    </div>
+  </div>
+
+  <!-- Loading Indicator -->
+  <div class="loading-indicator" [class.hidden]="isLoaded">
+    <div class="loading-spinner"></div>
+  </div>
+</div>

@@ -1,0 +1,201 @@
+<div class="user-dashboard">
+  <!-- Header -->
+  <header class="dashboard-header">
+    <div class="header-content">
+      <h1 class="dashboard-title">Recipe Finder</h1>
+      <p class="dashboard-subtitle">Discover your next favorite meal</p>
+    </div>
+    <div class="user-actions">
+      <button 
+        class="favorites-btn" 
+        [class.active]="showFavorites"
+        (click)="toggleFavoritesView()"
+      >
+        <span class="heart-icon">{{ showFavorites ? '❤️' : '🤍' }}</span>
+        {{ showFavorites ? 'All Recipes' : 'Favorites' }} 
+        <span class="favorites-count">({{ favorites.length }})</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Search Section -->
+  <section class="search-section">
+    <div class="search-container">
+      <div class="search-input-container" [class.focused]="isSearchFocused">
+        <span class="search-icon">🔍</span>
+        <input
+          type="text"
+          placeholder="Search recipes or ingredients..."
+          [(ngModel)]="searchQuery"
+          (input)="onSearch()"
+          (focus)="isSearchFocused = true"
+          (blur)="isSearchFocused = false"
+          class="search-input"
+        />
+      </div>
+      
+      <div class="view-toggle">
+        <button 
+          class="view-btn" 
+          [class.active]="activeView === 'grid'"
+          (click)="toggleView('grid')"
+        >
+          🟦
+        </button>
+        <button 
+          class="view-btn" 
+          [class.active]="activeView === 'list'"
+          (click)="toggleView('list')"
+        >
+          🟰
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categories -->
+  <section class="categories-section" *ngIf="!showFavorites">
+    <div class="categories-scroll">
+      <div class="categories-container">
+        <button
+          *ngFor="let category of categories"
+          class="category-btn"
+          [class.active]="selectedCategory === (category.name === 'All Recipes' ? 'all' : category.name.toLowerCase())"
+          (click)="onCategoryChange(category.name === 'All Recipes' ? 'all' : category.name.toLowerCase())"
+        >
+          <span class="category-icon">{{ category.icon }}</span>
+          {{ category.name }}
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="loading-spinner"></div>
+    <p>Loading delicious recipes...</p>
+  </div>
+
+  <!-- Empty Favorites State -->
+  <div *ngIf="showFavorites && favorites.length === 0 && !isLoading" class="empty-state">
+    <div class="empty-icon">❤️</div>
+    <h3>No favorites yet</h3>
+    <p>Start adding recipes to your favorites by clicking the heart icon</p>
+  </div>
+
+  <!-- Recipes Grid -->
+  <section *ngIf="!isLoading" class="recipes-section">
+    <div *ngIf="filteredRecipes.length === 0 && !showFavorites" class="empty-state">
+      <div class="empty-icon">🍳</div>
+      <h3>No recipes found</h3>
+      <p>Try adjusting your search or filter criteria</p>
+    </div>
+
+    <div 
+      [class.grid-view]="activeView === 'grid'"
+      [class.list-view]="activeView === 'list'"
+      class="recipes-container"
+    >
+      <div 
+        *ngFor="let recipe of filteredRecipes"
+        class="recipe-card"
+        [class.list-card]="activeView === 'list'"
+        (click)="viewRecipe(recipe.id)"
+      >
+        <div class="recipe-image">
+          <img [src]="recipe.image" [alt]="recipe.name" class="image-placeholder" />
+          <button 
+            class="favorite-btn"
+            (click)="toggleFavorite(recipe.id, $event)"
+            [class.favorited]="recipe.isFavorite"
+          >
+            {{ recipe.isFavorite ? '❤️' : '🤍' }}
+          </button>
+          <div class="recipe-badge {{ getDifficultyClass(recipe.difficulty) }}">
+            {{ recipe.difficulty }}
+          </div>
+        </div>
+
+        <div class="recipe-content">
+          <h3 class="recipe-title">{{ recipe.name }}</h3>
+          
+          <div class="recipe-meta">
+            <span class="cooking-time">⏱️ {{ getTimeDisplay(recipe.cookingTime) }}</span>
+            <span class="rating">⭐ {{ recipe.rating }}</span>
+          </div>
+
+          <div class="recipe-ingredients">
+            <p>{{ recipe.ingredients.slice(0, 3).join(' • ') }}{{ recipe.ingredients.length > 3 ? '...' : '' }}</p>
+          </div>
+
+          <div class="recipe-actions">
+            <button class="view-recipe-btn">View Recipe</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recipe Modal -->
+  <div *ngIf="showRecipeModal && selectedRecipe" class="modal-overlay" (click)="closeRecipeModal()">
+    <div class="modal-content" (click)="preventClose($event)">
+      <button class="modal-close" (click)="closeRecipeModal()">×</button>
+      
+      <div class="modal-header">
+        <div class="modal-image">
+          <img [src]="selectedRecipe.image" [alt]="selectedRecipe.name" class="image-placeholder-large" />
+          <button 
+            class="favorite-btn-modal"
+            (click)="toggleFavorite(selectedRecipe.id, $event)"
+            [class.favorited]="selectedRecipe.isFavorite"
+          >
+            {{ selectedRecipe.isFavorite ? '❤️' : '🤍' }}
+          </button>
+        </div>
+        
+        <div class="modal-title-section">
+          <h2 class="modal-title">{{ selectedRecipe.name }}</h2>
+          <div class="modal-meta">
+            <span class="modal-time">⏱️ {{ getTimeDisplay(selectedRecipe.cookingTime) }}</span>
+            <span class="modal-difficulty {{ getDifficultyClass(selectedRecipe.difficulty) }}">
+              {{ selectedRecipe.difficulty }}
+            </span>
+            <span class="modal-rating">⭐ {{ selectedRecipe.rating }}</span>
+            <span class="modal-category">{{ selectedRecipe.category }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <div class="ingredients-section">
+          <h3>Ingredients</h3>
+          <ul class="ingredients-list">
+            <li *ngFor="let ingredient of selectedRecipe.ingredients">{{ ingredient }}</li>
+          </ul>
+        </div>
+
+        <div class="instructions-section">
+          <h3>Instructions</h3>
+          <ol class="instructions-list">
+            <li *ngFor="let instruction of selectedRecipe.instructions">{{ instruction }}</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="modal-action-btn" (click)="closeRecipeModal()">Close</button>
+        <button 
+          class="modal-action-btn primary"
+          (click)="toggleFavorite(selectedRecipe.id, $event)"
+        >
+          {{ selectedRecipe.isFavorite ? 'Remove from Favorites' : 'Add to Favorites' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="dashboard-footer">
+    <p>© 2025 RecipeFinder - Abdallah Hany - Discover your culinary journey</p>
+  </footer>
+</div>
